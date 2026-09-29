@@ -29,8 +29,8 @@ export const DeployGithubVercelModal: React.FC<DeployGithubVercelModalProps> = (
 }) => {
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [gitEmail, setGitEmail] = useState('minasubhash8@gmail.com');
-  const [githubUsername, setGithubUsername] = useState('minasubhash8');
-  const [repoName, setRepoName] = useState('labexpress-rajasthan');
+  const [githubUsername, setGithubUsername] = useState('minasubhash8-create');
+  const [repoName, setRepoName] = useState('Lab-express');
   const [githubToken, setGithubToken] = useState('');
 
   if (!isOpen) return null;
@@ -159,8 +159,8 @@ git push -u origin main`;
               <input
                 type="text"
                 value={githubUsername}
-                onChange={(e) => setGithubUsername(e.target.value.trim() || 'minasubhash8')}
-                placeholder="minasubhash8"
+                onChange={(e) => setGithubUsername(e.target.value.trim() || 'minasubhash8-create')}
+                placeholder="minasubhash8-create"
                 className="w-full p-2 bg-white border border-teal-300 rounded-xl font-mono text-xs outline-teal-600"
               />
             </div>
@@ -169,8 +169,29 @@ git push -u origin main`;
               <input
                 type="text"
                 value={repoName}
-                onChange={(e) => setRepoName(e.target.value.trim() || 'labexpress-rajasthan')}
-                placeholder="labexpress-rajasthan"
+                onChange={(e) => setRepoName(e.target.value.trim() || 'Lab-express')}
+                placeholder="Lab-express"
+                className="w-full p-2 bg-white border border-teal-300 rounded-xl font-mono text-xs outline-teal-600"
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-[11px] font-bold text-teal-950">GitHub Personal Access Token (Optional):</label>
+                <a
+                  href="https://github.com/settings/tokens/new?scopes=repo&description=LabExpress-Push"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-[10px] text-teal-800 hover:text-teal-950 font-bold underline flex items-center gap-1"
+                >
+                  <span>Generate Token in 1-Click</span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
+              <input
+                type="password"
+                value={githubToken}
+                onChange={(e) => setGithubToken(e.target.value.trim())}
+                placeholder="Paste token (ghp_...) here to generate instant 1-liner push"
                 className="w-full p-2 bg-white border border-teal-300 rounded-xl font-mono text-xs outline-teal-600"
               />
             </div>
@@ -244,12 +265,12 @@ git push -u origin main`;
                 </a>
 
                 <a
-                  href={`https://vercel.com/new`}
+                  href={`https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2F${githubUsername}%2F${repoName}`}
                   target="_blank"
                   rel="noreferrer"
                   className="px-4 py-1.5 bg-teal-500 hover:bg-teal-400 text-slate-950 font-black rounded-xl flex items-center gap-1.5 shadow-md transition-all"
                 >
-                  <span>2. Import to Vercel</span>
+                  <span>2. 1-Click Auto-Deploy to Vercel</span>
                   <ExternalLink className="w-3.5 h-3.5" />
                 </a>
               </div>
