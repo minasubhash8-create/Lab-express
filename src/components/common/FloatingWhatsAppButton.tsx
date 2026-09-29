@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
 import { MessageCircle, X, ExternalLink, ShieldCheck, Sparkles, Clock, Phone } from 'lucide-react';
 import { OFFICIAL_WHATSAPP_DISPLAY, OFFICIAL_WHATSAPP_NUMBER } from './WhatsAppNotificationModal';
+import { useLabExpress } from '../../context/LabExpressContext';
 
 export const FloatingWhatsAppButton: React.FC = () => {
+  const { companyDetails } = useLabExpress();
   const [isOpen, setIsOpen] = useState(false);
 
+  const displayPhone = companyDetails?.officialPhone || OFFICIAL_WHATSAPP_DISPLAY;
+  const rawDigits = (companyDetails?.officialPhone || OFFICIAL_WHATSAPP_NUMBER).replace(/[^0-9]/g, '');
+  const waFullNumber = rawDigits.startsWith('91') && rawDigits.length > 10 ? rawDigits : ('91' + rawDigits.replace(/^0+/, ''));
+
   const getDirectChatUrl = (queryText: string) => {
-    return `https://wa.me/91${OFFICIAL_WHATSAPP_NUMBER}?text=${encodeURIComponent(queryText)}`;
+    return `https://wa.me/${waFullNumber}?text=${encodeURIComponent(queryText)}`;
   };
 
   return (
@@ -26,7 +32,7 @@ export const FloatingWhatsAppButton: React.FC = () => {
                     LabExpress Helpdesk
                     <span className="w-2 h-2 rounded-full bg-emerald-300 animate-pulse" />
                   </h4>
-                  <p className="text-[11px] text-emerald-100 font-medium">WhatsApp Support ({OFFICIAL_WHATSAPP_DISPLAY})</p>
+                  <p className="text-[11px] text-emerald-100 font-medium">WhatsApp Support ({displayPhone})</p>
                 </div>
               </div>
               <button
@@ -130,7 +136,7 @@ export const FloatingWhatsAppButton: React.FC = () => {
             </span>
           </div>
           <span className="text-[10px] text-emerald-100 font-mono font-bold leading-none mt-0.5 block">
-            {OFFICIAL_WHATSAPP_DISPLAY}
+            {displayPhone}
           </span>
         </div>
       </button>

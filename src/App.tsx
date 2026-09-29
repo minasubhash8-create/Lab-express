@@ -14,8 +14,6 @@ import { PortalLockModal } from './components/common/PortalLockModal';
 import { DeepLinkModal } from './components/common/DeepLinkModal';
 import { FloatingWhatsAppButton } from './components/common/FloatingWhatsAppButton';
 import { CompanyRegistrationsModal } from './components/common/CompanyRegistrationsModal';
-import { DemoDataManagerModal } from './components/common/DemoDataManagerModal';
-import { DeployGithubVercelModal } from './components/common/DeployGithubVercelModal';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import {
@@ -42,7 +40,8 @@ const AppContent: React.FC = () => {
     bookings,
     isAdminUnlocked,
     isLabUnlocked,
-    setActiveLabId
+    setActiveLabId,
+    companyDetails
   } = useLabExpress();
 
   const [customerInitialTab, setCustomerInitialTab] = useState<'catalog' | 'bookings' | 'reports'>('catalog');
@@ -50,8 +49,10 @@ const AppContent: React.FC = () => {
   const [showLabLockModal, setShowLabLockModal] = useState(false);
   const [showDeepLinkModal, setShowDeepLinkModal] = useState(false);
   const [showCompanyRegModal, setShowCompanyRegModal] = useState(false);
-  const [showDemoManagerModal, setShowDemoManagerModal] = useState(false);
-  const [showDeployModal, setShowDeployModal] = useState(false);
+
+  const supportPhone = companyDetails?.officialPhone || '+91 97837 70735';
+  const cleanDigits = supportPhone.replace(/[^0-9]/g, '');
+  const fullWaDigits = cleanDigits.startsWith('91') && cleanDigits.length > 10 ? cleanDigits : ('91' + cleanDigits.replace(/^0+/, ''));
 
   // Deep Link URL detection on initial mount
   useEffect(() => {
@@ -270,26 +271,6 @@ const AppContent: React.FC = () => {
               )}
             </button>
 
-            {/* Demo Data Manager */}
-            <button
-              onClick={() => setShowDemoManagerModal(true)}
-              className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-950 text-amber-300 hover:text-white border border-amber-700/60 font-bold transition-all cursor-pointer text-xs"
-              title="Open Demo Data Manager (1-click scenarios, Rajasthan seed, JSON backup)"
-            >
-              <Database className="w-3.5 h-3.5 text-amber-400" />
-              <span>🛠️ Demo Manager</span>
-            </button>
-
-            {/* Deploy GitHub & Vercel */}
-            <button
-              onClick={() => setShowDeployModal(true)}
-              className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-950 text-emerald-300 hover:text-white border border-emerald-700/60 font-bold transition-all cursor-pointer text-xs"
-              title="Deploy to GitHub & Vercel automatically"
-            >
-              <Rocket className="w-3.5 h-3.5 text-emerald-400" />
-              <span>🚀 Deploy Vercel</span>
-            </button>
-
             {/* Quick Deep Link Button */}
             <button
               onClick={() => setShowDeepLinkModal(true)}
@@ -340,12 +321,12 @@ const AppContent: React.FC = () => {
             </button>
             <span className="text-slate-300">•</span>
             <a
-              href="https://wa.me/919783770735?text=Hello%20LabExpress%20Team%2C%20inquiry%20regarding%20diagnostics"
+              href={`https://wa.me/${fullWaDigits}?text=Hello%20LabExpress%20Team%2C%20inquiry%20regarding%20diagnostics`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-emerald-700 hover:text-emerald-800 font-bold flex items-center gap-1"
             >
-              <span>WhatsApp: +91 97837 70735</span>
+              <span>WhatsApp: {supportPhone}</span>
             </a>
           </div>
         </div>
@@ -397,18 +378,6 @@ const AppContent: React.FC = () => {
       <CompanyRegistrationsModal
         isOpen={showCompanyRegModal}
         onClose={() => setShowCompanyRegModal(false)}
-      />
-
-      {/* Demo Data Manager Modal */}
-      <DemoDataManagerModal
-        isOpen={showDemoManagerModal}
-        onClose={() => setShowDemoManagerModal(false)}
-      />
-
-      {/* GitHub & Vercel Auto-Deployment Modal */}
-      <DeployGithubVercelModal
-        isOpen={showDeployModal}
-        onClose={() => setShowDeployModal(false)}
       />
 
       {/* Official Vercel Analytics & Speed Insights Plugins */}

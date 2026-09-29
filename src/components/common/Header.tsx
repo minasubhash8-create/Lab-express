@@ -5,8 +5,6 @@ import { BrandLogo } from './BrandLogo';
 import { PortalLockModal } from './PortalLockModal';
 import { DeepLinkModal } from './DeepLinkModal';
 import { CompanyRegistrationsModal } from './CompanyRegistrationsModal';
-import { DemoDataManagerModal } from './DemoDataManagerModal';
-import { DeployGithubVercelModal } from './DeployGithubVercelModal';
 import {
   Activity,
   ShieldCheck,
@@ -51,7 +49,8 @@ export const Header: React.FC<HeaderProps> = ({ onOpenCart, onOpenBookings, onOp
     isAdminUnlocked,
     lockAdmin,
     isLabUnlocked,
-    lockLab
+    lockLab,
+    companyDetails
   } = useLabExpress();
 
   const [showSupportModal, setShowSupportModal] = useState(false);
@@ -60,8 +59,10 @@ export const Header: React.FC<HeaderProps> = ({ onOpenCart, onOpenBookings, onOp
   const [showLabLockModal, setShowLabLockModal] = useState(false);
   const [showDeepLinkModal, setShowDeepLinkModal] = useState(false);
   const [showCompanyRegModal, setShowCompanyRegModal] = useState(false);
-  const [showDemoManagerModal, setShowDemoManagerModal] = useState(false);
-  const [showDeployModal, setShowDeployModal] = useState(false);
+
+  const supportPhone = companyDetails?.officialPhone || '+91 97837 70735';
+  const cleanWaPhone = supportPhone.replace(/[^0-9]/g, '');
+  const waChatNumber = cleanWaPhone.startsWith('91') && cleanWaPhone.length > 10 ? cleanWaPhone : ('91' + cleanWaPhone.replace(/^0+/, ''));
 
   // Computed badges
   const pendingCustomerBookings = bookings.filter(
@@ -125,26 +126,6 @@ export const Header: React.FC<HeaderProps> = ({ onOpenCart, onOpenBookings, onOp
               <span>GST & MSME Reg</span>
             </button>
 
-            {/* Demo Data Manager */}
-            <button
-              onClick={() => setShowDemoManagerModal(true)}
-              className="inline-flex items-center gap-1 text-amber-300 hover:text-white bg-amber-950/60 border border-amber-700/60 px-2 py-0.5 rounded transition-colors text-[11px] font-bold cursor-pointer"
-              title="Open Demo Data Manager (1-click scenarios, Rajasthan seed, JSON backup)"
-            >
-              <Database className="w-3 h-3 text-amber-400" />
-              <span>🛠️ Demo Manager</span>
-            </button>
-
-            {/* Deploy GitHub & Vercel */}
-            <button
-              onClick={() => setShowDeployModal(true)}
-              className="inline-flex items-center gap-1 text-emerald-300 hover:text-white bg-emerald-950/60 border border-emerald-700/60 px-2 py-0.5 rounded transition-colors text-[11px] font-bold cursor-pointer"
-              title="Deploy to GitHub & Vercel automatically"
-            >
-              <Rocket className="w-3 h-3 text-emerald-400" />
-              <span>🚀 Deploy Vercel</span>
-            </button>
-
             {/* Deep Link Connect Option */}
             <button
               onClick={() => setShowDeepLinkModal(true)}
@@ -162,7 +143,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenCart, onOpenBookings, onOp
               className="inline-flex items-center gap-1 text-teal-400 hover:text-teal-300 transition-colors font-medium text-[11px] cursor-pointer"
             >
               <MessageCircle className="w-3 h-3" />
-              24x7 WhatsApp Help
+              24x7 WhatsApp ({supportPhone})
             </button>
           </div>
         </div>
@@ -427,7 +408,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenCart, onOpenBookings, onOp
                 <div>
                   <p className="font-bold text-emerald-900 text-xs">Official Diagnostic Hotline & WhatsApp</p>
                   <p className="text-xs text-emerald-800 mt-0.5">
-                    WhatsApp: <a href="https://wa.me/919783770735?text=Hello%20LabExpress%2C%20I%20need%20assistance%20with%20diagnostic%20booking" target="_blank" rel="noopener noreferrer" className="font-mono font-bold text-emerald-950 underline hover:text-emerald-700">+91 97837 70735</a> (Instant Automated Bot + Lab Technologist Support)
+                    WhatsApp: <a href={`https://wa.me/${waChatNumber}?text=Hello%20LabExpress%2C%20I%20need%20assistance%20with%20diagnostic%20booking`} target="_blank" rel="noopener noreferrer" className="font-mono font-bold text-emerald-950 underline hover:text-emerald-700">{supportPhone}</a> (Instant Automated Bot + Lab Technologist Support)
                   </p>
                 </div>
               </div>
@@ -442,14 +423,14 @@ export const Header: React.FC<HeaderProps> = ({ onOpenCart, onOpenBookings, onOp
 
             <div className="flex gap-2">
               <a
-                href="https://wa.me/919783770735?text=Hello%20LabExpress%2C%20I%20need%20assistance%20with%20diagnostic%20booking"
+                href={`https://wa.me/${waChatNumber}?text=Hello%20LabExpress%2C%20I%20need%20assistance%20with%20diagnostic%20booking`}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setShowSupportModal(false)}
                 className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer text-center"
               >
                 <MessageCircle className="w-4 h-4" />
-                Open WhatsApp (+91 97837 70735)
+                Open WhatsApp ({supportPhone})
               </a>
               <button
                 onClick={() => setShowSupportModal(false)}
@@ -524,18 +505,6 @@ export const Header: React.FC<HeaderProps> = ({ onOpenCart, onOpenBookings, onOp
       <CompanyRegistrationsModal
         isOpen={showCompanyRegModal}
         onClose={() => setShowCompanyRegModal(false)}
-      />
-
-      {/* Demo Data Manager Modal */}
-      <DemoDataManagerModal
-        isOpen={showDemoManagerModal}
-        onClose={() => setShowDemoManagerModal(false)}
-      />
-
-      {/* GitHub & Vercel Auto-Deployment Modal */}
-      <DeployGithubVercelModal
-        isOpen={showDeployModal}
-        onClose={() => setShowDeployModal(false)}
       />
     </>
   );

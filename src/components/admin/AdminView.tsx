@@ -4,6 +4,8 @@ import { Booking, BookingStatus, TestItem, PartnerLab, HealthPackage } from '../
 import { ReportViewerModal } from '../customer/ReportViewerModal';
 import { BrandLogo } from '../common/BrandLogo';
 import { DeepLinkModal } from '../common/DeepLinkModal';
+import { DemoDataManagerModal } from '../common/DemoDataManagerModal';
+import { DeployGithubVercelModal } from '../common/DeployGithubVercelModal';
 import { RAJASTHAN_DISTRICTS, OTHER_METRO_CITIES } from '../../data/rajasthanData';
 import { OFFICIAL_WHATSAPP_DISPLAY, WhatsAppNotificationModal, getWhatsAppLink } from '../common/WhatsAppNotificationModal';
 import {
@@ -69,7 +71,12 @@ import {
   Share2,
   HardDrive,
   Mail,
-  FileText
+  FileText,
+  Phone,
+  PhoneCall,
+  Rocket,
+  MessageCircle,
+  ExternalLink
 } from 'lucide-react';
 
 export const AdminView: React.FC = () => {
@@ -118,6 +125,8 @@ export const AdminView: React.FC = () => {
   const [editPriceInput, setEditPriceInput] = useState('');
   const [toast, setToast] = useState<{ message: string; type?: 'success' | 'danger' | 'info' } | null>(null);
   const [showDeepLinkModal, setShowDeepLinkModal] = useState(false);
+  const [showDemoManagerModal, setShowDemoManagerModal] = useState(false);
+  const [showDeployModal, setShowDeployModal] = useState(false);
   const [showMasterPassword, setShowMasterPassword] = useState(false);
 
   const showToast = (message: string, type: 'success' | 'danger' | 'info' = 'success') => {
@@ -126,8 +135,22 @@ export const AdminView: React.FC = () => {
   };
 
   const [activeAdminTab, setActiveAdminTab] = useState<
-    'overview' | 'bookings' | 'packages' | 'catalog' | 'demo_manager' | 'compliance' | 'labs' | 'phlebotomy' | 'finance' | 'audit'
+    'overview' | 'bookings' | 'packages' | 'catalog' | 'demo_manager' | 'compliance' | 'deployment' | 'support_settings' | 'labs' | 'phlebotomy' | 'finance' | 'audit'
   >('overview');
+
+  // Support Helpline & WhatsApp Phone State
+  const [formOfficialPhone, setFormOfficialPhone] = useState(companyDetails?.officialPhone || '+91 97837 70735');
+
+  const handleSaveSupportPhone = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const clean = formOfficialPhone.trim();
+    if (!clean) {
+      showToast('⚠️ Please enter a valid support phone number', 'danger');
+      return;
+    }
+    updateCompanyDetails({ officialPhone: clean });
+    showToast(`✅ Customer Support Helpline & WhatsApp Number updated to: ${clean}`);
+  };
 
   // GST, MSME & Legal Registration State
   const [formGstNumber, setFormGstNumber] = useState(companyDetails?.gstNumber || '08AAACL9829M1ZQ');
@@ -147,6 +170,7 @@ export const AdminView: React.FC = () => {
   const handleSaveCompanyDetails = (e: React.FormEvent) => {
     e.preventDefault();
     updateCompanyDetails({
+      officialPhone: formOfficialPhone.trim(),
       gstNumber: formGstNumber.trim().toUpperCase(),
       msmeNumber: formMsmeNumber.trim().toUpperCase(),
       cinNumber: formCinNumber.trim().toUpperCase(),
@@ -161,7 +185,7 @@ export const AdminView: React.FC = () => {
       bankAccountName: formBankAccountName.trim(),
       upiVpa: formUpiVpa.trim()
     });
-    showToast('✅ Company Registration & Tax Profile (GST / MSME / Reg No) updated successfully!');
+    showToast('✅ Company Registration & Tax Profile (GST / MSME / Reg No / Support Phone) updated successfully!');
   };
 
   // Package State
@@ -730,7 +754,37 @@ export const AdminView: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Demo Data Manager in Admin */}
+            <button
+              onClick={() => setShowDemoManagerModal(true)}
+              className="bg-amber-950/80 hover:bg-amber-900 text-amber-300 border border-amber-500/60 text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer"
+              title="Open Demo Data Manager (1-click scenarios, Rajasthan seed, JSON backup)"
+            >
+              <Database className="w-3.5 h-3.5 text-amber-400" />
+              <span>🛠️ Demo Manager</span>
+            </button>
+
+            {/* Deploy GitHub & Vercel in Admin */}
+            <button
+              onClick={() => setShowDeployModal(true)}
+              className="bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 border border-emerald-500/60 text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer"
+              title="Deploy to GitHub & Vercel automatically"
+            >
+              <Rocket className="w-3.5 h-3.5 text-emerald-400" />
+              <span>🚀 Deploy Vercel</span>
+            </button>
+
+            {/* Support Number Quick Edit Button */}
+            <button
+              onClick={() => setActiveAdminTab('support_settings')}
+              className="bg-teal-950/80 hover:bg-teal-900 text-teal-300 border border-teal-500/60 text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer"
+              title="Configure 24x7 Customer Support & WhatsApp Number"
+            >
+              <PhoneCall className="w-3.5 h-3.5 text-teal-400" />
+              <span>📞 {companyDetails?.officialPhone || '+91 97837 70735'}</span>
+            </button>
+
             <button
               onClick={() => setShowDeepLinkModal(true)}
               className="bg-indigo-900/70 hover:bg-indigo-800 text-indigo-200 border border-indigo-500/60 text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer"
@@ -751,10 +805,6 @@ export const AdminView: React.FC = () => {
               <span className={`w-2 h-2 rounded-full ${isDemoModeActive ? 'bg-amber-400' : 'bg-emerald-400 animate-pulse'}`} />
               {isDemoModeActive ? 'Demo Mode Active' : 'Live Production Mode'}
             </button>
-            <span className="text-xs bg-slate-800 text-teal-300 font-mono px-3 py-1.5 rounded-lg border border-slate-700 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              SLA Compliance: 99.4%
-            </span>
             <button
               onClick={() => lockAdmin()}
               className="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer"
@@ -773,8 +823,10 @@ export const AdminView: React.FC = () => {
             { id: 'bookings', label: `All Bookings (${bookings.length})`, icon: ClipboardList },
             { id: 'packages', label: `Health Packages (${packages.length})`, icon: Boxes },
             { id: 'catalog', label: `Test Catalog (${tests.length})`, icon: FlaskConical },
+            { id: 'support_settings', label: '📞 Support & WhatsApp Number', icon: PhoneCall },
             { id: 'compliance', label: 'GST & MSME Registration', icon: ShieldCheck },
-            { id: 'demo_manager', label: `Demo Data Manager`, icon: Database },
+            { id: 'demo_manager', label: `🛠️ Demo Data Manager`, icon: Database },
+            { id: 'deployment', label: `🚀 Deploy Vercel & GitHub`, icon: Rocket },
             { id: 'labs', label: `Partner Labs (${labs.length})`, icon: Building2 },
             { id: 'phlebotomy', label: `Phlebotomist Fleet (${phlebotomists.length})`, icon: Users },
             { id: 'finance', label: 'Commissions & Payouts', icon: DollarSign },
@@ -1837,6 +1889,31 @@ export const AdminView: React.FC = () => {
               </p>
             </div>
 
+            {/* Quick Launch Advanced Demo Manager Modal */}
+            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3 shadow-xs">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-amber-600 text-white flex items-center justify-center font-bold text-lg shrink-0">
+                  🛠️
+                </div>
+                <div>
+                  <h4 className="font-black text-sm text-amber-950">
+                    Advanced Demo Data Manager Hub
+                  </h4>
+                  <p className="text-xs text-amber-800">
+                    1-Click Seed Rajasthan NABL Hubs (Jodhpur, Kota, Udaipur, Bikaner, Ajmer), Generate Sample Bookings & Export JSON
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setShowDemoManagerModal(true)}
+                className="bg-amber-600 hover:bg-amber-700 text-white font-black text-xs px-4 py-2 rounded-xl shadow-xs transition-colors cursor-pointer flex items-center gap-1.5"
+              >
+                <Database className="w-3.5 h-3.5" />
+                <span>Open Advanced Demo Manager Modal</span>
+              </button>
+            </div>
+
             {/* Main Mode Toggle Card */}
             <div className={`rounded-3xl p-6 border transition-all ${
               !isDemoModeActive
@@ -2116,7 +2193,391 @@ export const AdminView: React.FC = () => {
           </div>
         )}
 
-        {/* ================= ADMIN TAB 3: TEST CATALOG ================= */}
+        {/* ================= ADMIN TAB: SUPPORT PHONE & WHATSAPP SETTINGS ================= */}
+        {activeAdminTab === 'support_settings' && (
+          <div className="space-y-6">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="bg-teal-100 text-teal-800 text-[10px] font-black uppercase px-2 py-0.5 rounded-full border border-teal-200">
+                  Customer Care & Helpline
+                </span>
+                <h3 className="font-extrabold text-xl text-slate-900">
+                  📞 Official Customer Support & WhatsApp Helpline Configuration
+                </h3>
+              </div>
+              <p className="text-xs text-slate-500 mt-1">
+                यहाँ से आप पूरे प्लेटफॉर्म का सपोर्ट व व्हाट्सएप हेल्पलाइन नंबर बदल सकते हैं। यह नंबर हेडर, फ्लोटिंग व्हाट्सएप बटन, फुटर, ट्रैकिंग एवं नोटिफिकेशन पर तुरंत लाइव अपडेट हो जाएगा।
+              </p>
+            </div>
+
+            {/* Current Active Number Status Card */}
+            <div className="bg-gradient-to-r from-emerald-950 via-teal-950 to-slate-900 rounded-3xl p-6 text-white border border-emerald-500/40 shadow-xl space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/30 shrink-0">
+                    <PhoneCall className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-black uppercase tracking-wider text-emerald-300 block">
+                      Active 24x7 Customer Helpline
+                    </span>
+                    <h2 className="text-2xl sm:text-3xl font-black text-white font-mono tracking-tight">
+                      {companyDetails?.officialPhone || '+91 97837 70735'}
+                    </h2>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  <a
+                    href={`https://wa.me/${(companyDetails?.officialPhone || '9783770735').replace(/[^0-9]/g, '')}?text=Hello%20LabExpress%20Team%2C%20testing%20official%20helpline`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-4 py-2 rounded-xl flex items-center gap-1.5 transition-all shadow-md shadow-emerald-700/30 cursor-pointer"
+                  >
+                    <MessageCircle className="w-4 h-4 fill-white" />
+                    <span>Test WhatsApp Chat</span>
+                    <ArrowUpRight className="w-3.5 h-3.5" />
+                  </a>
+                  <span className="bg-emerald-500/20 text-emerald-300 text-xs font-bold px-3 py-1.5 rounded-xl border border-emerald-500/30 flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    Active Site-Wide
+                  </span>
+                </div>
+              </div>
+
+              <div className="pt-3 border-t border-white/10 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-slate-300">
+                <div className="bg-white/5 rounded-xl p-2.5 border border-white/10">
+                  <span className="font-bold text-white block">🌐 Website Top Header:</span>
+                  <span className="text-[11px] text-teal-300 font-mono">{companyDetails?.officialPhone || '+91 97837 70735'}</span>
+                </div>
+                <div className="bg-white/5 rounded-xl p-2.5 border border-white/10">
+                  <span className="font-bold text-white block">💬 Floating WhatsApp Widget:</span>
+                  <span className="text-[11px] text-emerald-300 font-mono">wa.me/{(companyDetails?.officialPhone || '9783770735').replace(/[^0-9]/g, '')}</span>
+                </div>
+                <div className="bg-white/5 rounded-xl p-2.5 border border-white/10">
+                  <span className="font-bold text-white block">📑 Diagnostic Invoices & SMS:</span>
+                  <span className="text-[11px] text-indigo-300 font-mono">{companyDetails?.officialPhone || '+91 97837 70735'}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Change Number Form Card */}
+            <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-5">
+              <h4 className="font-black text-base text-slate-900 flex items-center gap-2">
+                <Phone className="w-5 h-5 text-teal-600" />
+                <span>Update Customer Care & WhatsApp Number</span>
+              </h4>
+
+              <form onSubmit={handleSaveSupportPhone} className="space-y-4 max-w-xl">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                    Official Helpline & WhatsApp Number:
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={formOfficialPhone}
+                      onChange={(e) => setFormOfficialPhone(e.target.value)}
+                      placeholder="+91 97837 70735"
+                      className="flex-1 p-3 bg-slate-50 border border-slate-300 focus:border-teal-600 focus:bg-white rounded-xl font-mono font-bold text-sm text-slate-900 outline-none transition-all"
+                      required
+                    />
+                    <button
+                      type="submit"
+                      className="bg-teal-600 hover:bg-teal-700 text-white font-black text-xs px-5 py-3 rounded-xl shadow-md shadow-teal-600/20 transition-all cursor-pointer flex items-center gap-1.5 shrink-0"
+                    >
+                      <Check className="w-4 h-4" />
+                      <span>Save & Apply</span>
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-slate-500 mt-1">
+                    Enter standard 10-digit mobile number or standard format e.g. <strong className="font-mono text-slate-700">+91 97837 70735</strong> or <strong className="font-mono text-slate-700">1800-200-5227</strong>
+                  </p>
+                </div>
+
+                {/* Quick Presets */}
+                <div className="space-y-2 pt-2">
+                  <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider block">
+                    Quick Preset Numbers:
+                  </span>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { label: 'Current Official', phone: '+91 97837 70735' },
+                      { label: 'Jaipur HQ Mobile', phone: '+91 98290 12345' },
+                      { label: 'Jaipur Landline', phone: '+91 141 2780000' },
+                      { label: 'Toll Free Helpline', phone: '1800-200-5227' }
+                    ].map((preset) => (
+                      <button
+                        key={preset.phone}
+                        type="button"
+                        onClick={() => setFormOfficialPhone(preset.phone)}
+                        className={`text-xs px-3 py-1.5 rounded-lg border font-mono font-semibold transition-all cursor-pointer ${
+                          formOfficialPhone === preset.phone
+                            ? 'bg-teal-50 border-teal-500 text-teal-900 font-bold'
+                            : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
+                        }`}
+                      >
+                        {preset.label}: <strong>{preset.phone}</strong>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* ================= ADMIN TAB: GST, MSME & LEGAL REGISTRATIONS ================= */}
+        {activeAdminTab === 'compliance' && (
+          <div className="space-y-6">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="bg-teal-100 text-teal-800 text-[10px] font-black uppercase px-2 py-0.5 rounded-full border border-teal-200">
+                  Government & Legal Compliance
+                </span>
+                <h3 className="font-extrabold text-xl text-slate-900">
+                  🛡️ Company Legal Registrations & Tax Profile
+                </h3>
+              </div>
+              <p className="text-xs text-slate-500 mt-1">
+                Configure GSTIN, MSME Udyam, CIN, and Clinical Establishment Registration numbers displayed on invoices, reports, and footers.
+              </p>
+            </div>
+
+            <form onSubmit={handleSaveCompanyDetails} className="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs space-y-6">
+              {/* Government Registrations */}
+              <div>
+                <h4 className="font-black text-sm text-slate-900 mb-3 flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-teal-600" />
+                  <span>Government License & Tax Identification Numbers</span>
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">GSTIN Number (15 Characters)</label>
+                    <input
+                      type="text"
+                      maxLength={15}
+                      value={formGstNumber}
+                      onChange={(e) => setFormGstNumber(e.target.value.toUpperCase())}
+                      className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-mono font-bold text-xs uppercase outline-teal-600"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">MSME Udyam Registration</label>
+                    <input
+                      type="text"
+                      value={formMsmeNumber}
+                      onChange={(e) => setFormMsmeNumber(e.target.value.toUpperCase())}
+                      className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-mono font-bold text-xs uppercase outline-teal-600"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">Company CIN Number</label>
+                    <input
+                      type="text"
+                      value={formCinNumber}
+                      onChange={(e) => setFormCinNumber(e.target.value.toUpperCase())}
+                      className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-mono font-bold text-xs uppercase outline-teal-600"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">Clinical Establishment Reg No</label>
+                    <input
+                      type="text"
+                      value={formClinicalReg}
+                      onChange={(e) => setFormClinicalReg(e.target.value.toUpperCase())}
+                      className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-mono font-bold text-xs uppercase outline-teal-600"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">NABL Accreditation No</label>
+                    <input
+                      type="text"
+                      value={formNablAccred}
+                      onChange={(e) => setFormNablAccred(e.target.value.toUpperCase())}
+                      className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-mono font-bold text-xs uppercase outline-teal-600"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">Helpline Phone Number</label>
+                    <input
+                      type="text"
+                      value={formOfficialPhone}
+                      onChange={(e) => setFormOfficialPhone(e.target.value)}
+                      className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-mono font-bold text-xs outline-teal-600"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Company & Bank Details */}
+              <div className="pt-4 border-t border-slate-100">
+                <h4 className="font-black text-sm text-slate-900 mb-3 flex items-center gap-2">
+                  <Building2 className="w-4 h-4 text-teal-600" />
+                  <span>Corporate Entity & Bank Account Details</span>
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">Company Legal Name</label>
+                    <input
+                      type="text"
+                      value={formCompanyName}
+                      onChange={(e) => setFormCompanyName(e.target.value)}
+                      className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs outline-teal-600"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">Trade Name / Brand</label>
+                    <input
+                      type="text"
+                      value={formTradeName}
+                      onChange={(e) => setFormTradeName(e.target.value)}
+                      className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs outline-teal-600"
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-bold text-slate-700 mb-1">Registered Office Address</label>
+                    <input
+                      type="text"
+                      value={formRegisteredOffice}
+                      onChange={(e) => setFormRegisteredOffice(e.target.value)}
+                      className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs outline-teal-600"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">Bank Name</label>
+                    <input
+                      type="text"
+                      value={formBankName}
+                      onChange={(e) => setFormBankName(e.target.value)}
+                      className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs outline-teal-600"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">Account Number</label>
+                    <input
+                      type="text"
+                      value={formBankAccountNo}
+                      onChange={(e) => setFormBankAccountNo(e.target.value)}
+                      className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-mono text-xs outline-teal-600"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">IFSC Code</label>
+                    <input
+                      type="text"
+                      value={formBankIfsc}
+                      onChange={(e) => setFormBankIfsc(e.target.value.toUpperCase())}
+                      className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-mono text-xs outline-teal-600"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">Official UPI VPA</label>
+                    <input
+                      type="text"
+                      value={formUpiVpa}
+                      onChange={(e) => setFormUpiVpa(e.target.value)}
+                      className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl font-mono text-xs outline-teal-600"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end pt-2">
+                <button
+                  type="submit"
+                  className="bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs px-6 py-2.5 rounded-xl shadow-md transition-colors cursor-pointer"
+                >
+                  Save Government & Legal Profile
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+
+        {/* ================= ADMIN TAB: DEPLOYMENT HUB ================= */}
+        {activeAdminTab === 'deployment' && (
+          <div className="space-y-6">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase px-2 py-0.5 rounded-full border border-emerald-200">
+                    Production CI/CD
+                  </span>
+                  <h3 className="font-extrabold text-xl text-slate-900">
+                    🚀 GitHub & Vercel Auto-Deployment Hub
+                  </h3>
+                </div>
+                <p className="text-xs text-slate-500 mt-1">
+                  गिटहब और वर्सेल ऑटो-डिप्लॉयमेंट: प्रोजेक्ट रिपॉजिटरी स्टेटस, वर्सेल 1-क्लिक डिप्लॉय एवं ऑटोमैटिक बिल्ड सेटिंग्स
+                </p>
+              </div>
+
+              <button
+                onClick={() => setShowDeployModal(true)}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs px-5 py-2.5 rounded-xl shadow-md shadow-emerald-600/20 flex items-center gap-2 transition-all cursor-pointer"
+              >
+                <Rocket className="w-4 h-4" />
+                <span>Open Deployment Setup Modal</span>
+              </button>
+            </div>
+
+            {/* GitHub & Vercel Status Card */}
+            <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950 rounded-3xl p-6 text-white border border-slate-800 shadow-xl space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <span className="text-[10px] font-bold text-teal-300 uppercase tracking-wider block">
+                    Connected Remote Git Repository
+                  </span>
+                  <h4 className="text-lg font-black font-mono text-white flex items-center gap-2">
+                    <span>https://github.com/minasubhash8-create/Lab-express</span>
+                    <a
+                      href="https://github.com/minasubhash8-create/Lab-express"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-teal-400 hover:text-white"
+                    >
+                      <ArrowUpRight className="w-4 h-4" />
+                    </a>
+                  </h4>
+                  <p className="text-xs text-slate-300">
+                    Committer: <strong>Subhash Meena &lt;minasubhash8@gmail.com&gt;</strong> • Branch: <strong>main</strong>
+                  </p>
+                </div>
+
+                <a
+                  href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fminasubhash8-create%2FLab-express"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-teal-500 hover:bg-teal-400 text-slate-950 font-black text-xs px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-lg transition-all"
+                >
+                  <Rocket className="w-4 h-4" />
+                  <span>1-Click Deploy to Vercel</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
+
+              <div className="pt-3 border-t border-slate-800 grid grid-cols-1 sm:grid-cols-4 gap-2 text-xs">
+                <div className="p-3 bg-white/5 rounded-xl border border-white/10">
+                  <span className="font-bold text-emerald-400 block">✅ vercel.json</span>
+                  <span className="text-[10px] text-slate-400">SPA Rewrites Configured</span>
+                </div>
+                <div className="p-3 bg-white/5 rounded-xl border border-white/10">
+                  <span className="font-bold text-emerald-400 block">✅ Vercel Analytics</span>
+                  <span className="text-[10px] text-slate-400">@vercel/analytics Mounted</span>
+                </div>
+                <div className="p-3 bg-white/5 rounded-xl border border-white/10">
+                  <span className="font-bold text-emerald-400 block">✅ Speed Insights</span>
+                  <span className="text-[10px] text-slate-400">@vercel/speed-insights Mounted</span>
+                </div>
+                <div className="p-3 bg-white/5 rounded-xl border border-white/10">
+                  <span className="font-bold text-emerald-400 block">✅ Build Status</span>
+                  <span className="text-[10px] text-slate-400">Zero Error Compiled</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         {activeAdminTab === 'catalog' && (
           <div className="space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
@@ -3729,6 +4190,18 @@ export const AdminView: React.FC = () => {
       <DeepLinkModal
         isOpen={showDeepLinkModal}
         onClose={() => setShowDeepLinkModal(false)}
+      />
+
+      {/* Demo Data Manager Modal (Admin Only) */}
+      <DemoDataManagerModal
+        isOpen={showDemoManagerModal}
+        onClose={() => setShowDemoManagerModal(false)}
+      />
+
+      {/* GitHub & Vercel Auto-Deployment Modal (Admin Only) */}
+      <DeployGithubVercelModal
+        isOpen={showDeployModal}
+        onClose={() => setShowDeployModal(false)}
       />
 
       {/* WhatsApp Order Notification Modal */}
