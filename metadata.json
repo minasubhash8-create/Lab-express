@@ -1,0 +1,7 @@
+{
+  "name": "LabExpress — Unified Diagnostic Lab Platform",
+  "description": "3-in-1 diagnostic booking ecosystem: Customer Booking App with Zepto-inspired speed, Admin Central Operations, and Partner Lab Processing Hub with synchronized live order flow.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
