@@ -16,6 +16,8 @@ import { FloatingWhatsAppButton } from './components/common/FloatingWhatsAppButt
 import { CompanyRegistrationsModal } from './components/common/CompanyRegistrationsModal';
 import { DemoDataManagerModal } from './components/common/DemoDataManagerModal';
 import { DeployGithubVercelModal } from './components/common/DeployGithubVercelModal';
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import {
   Sparkles,
   ArrowRight,
@@ -408,6 +410,10 @@ const AppContent: React.FC = () => {
         isOpen={showDeployModal}
         onClose={() => setShowDeployModal(false)}
       />
+
+      {/* Official Vercel Analytics & Speed Insights Plugins */}
+      <Analytics />
+      <SpeedInsights />
 
     </div>
   );
