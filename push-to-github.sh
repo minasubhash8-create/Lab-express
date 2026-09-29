@@ -4,11 +4,13 @@ set -e
 
 GIT_EMAIL="minasubhash8@gmail.com"
 GIT_NAME="Subhash Meena"
-DEFAULT_REPO="labexpress-rajasthan"
+DEFAULT_USER="minasubhash8-create"
+DEFAULT_REPO="Lab-express"
 
 echo "=========================================================="
 echo "🚀 LabExpress GitHub & Vercel Push Utility"
 echo "Author Email: $GIT_EMAIL"
+echo "Target Repo: https://github.com/$DEFAULT_USER/$DEFAULT_REPO"
 echo "=========================================================="
 
 # Ensure Git is configured
@@ -26,9 +28,9 @@ git add .
 git commit -m "feat: complete LabExpress Rajasthan diagnostic network with GST MSME & Vercel deployment" || echo "Working tree clean, proceeding..."
 
 echo ""
-echo "Enter your GitHub Username (Default: minasubhash8):"
+echo "Enter your GitHub Username (Default: $DEFAULT_USER):"
 read -r GITHUB_USER
-GITHUB_USER=${GITHUB_USER:-minasubhash8}
+GITHUB_USER=${GITHUB_USER:-$DEFAULT_USER}
 
 echo "Enter your GitHub Repository Name (Default: $DEFAULT_REPO):"
 read -r REPO_NAME

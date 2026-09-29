@@ -16,8 +16,8 @@ LabExpress is pre-configured with **Vercel zero-config routing (`vercel.json`)**
 
 Run these exact commands in your terminal:
 ```bash
-# 1. Add your remote repository on GitHub (replace with your repo name if different)
-git remote add origin https://github.com/minasubhash8/labexpress-rajasthan.git
+# 1. Add your remote repository on GitHub (already configured)
+git remote add origin https://github.com/minasubhash8-create/Lab-express.git
 
 # 2. Push code to GitHub
 git push -u origin main
@@ -27,24 +27,24 @@ git push -u origin main
 
 Or using your Personal Access Token directly:
 ```bash
-git push https://<YOUR_GITHUB_TOKEN>@github.com/minasubhash8/labexpress-rajasthan.git main
+git push https://<YOUR_GITHUB_TOKEN>@github.com/minasubhash8-create/Lab-express.git main
 ```
 
 ---
 
 ## 🌐 Step 2: Connect your Vercel Account & Deploy
 
-1. Open **[https://vercel.com/signup](https://vercel.com/signup)** or **[https://vercel.com/login](https://vercel.com/login)**.
-2. Select **"Continue with GitHub"** using your account associated with `minasubhash8@gmail.com`.
-3. Go to **[https://vercel.com/new](https://vercel.com/new)**.
-4. Under **"Import Git Repository"**, you will see **`labexpress-rajasthan`**. Click **"Import"**.
+1. Open **[https://vercel.com/login](https://vercel.com/login)**.
+2. Select **"Continue with GitHub"** using your account associated with `minasubhash8@gmail.com` (`minasubhash8-create`).
+3. 1-Click Auto-Deploy: **[https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fminasubhash8-create%2FLab-express](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fminasubhash8-create%2FLab-express)**
+4. Or go to **[https://vercel.com/new](https://vercel.com/new)** and import **`Lab-express`**.
 5. Vercel automatically detects the framework settings:
    - **Framework Preset**: `Vite`
    - **Build Command**: `npm run build`
    - **Output Directory**: `dist`
 6. Click **Deploy**.
 7. ✨ Within 30 seconds, your application will be live at:
-   `https://labexpress-rajasthan.vercel.app` (or your custom domain).
+   `https://lab-express.vercel.app`!
 8. **Automatic Continuous Deployment**: Any future changes pushed to GitHub will automatically trigger Vercel to rebuild and update your live site!
 
 ---
